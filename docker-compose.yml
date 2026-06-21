@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:13
+    container_name: kpd-db
+    env_file:
+      - .env   # или передайте переменные отдельно
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"   # только для локальной отладки, в проде не открываем наружу
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kpd-backend
+    env_file:
+      - .env
+    environment:
+      POSTGRES_HOST: database   # имя сервиса базы данных
+    ports:
+      - "4000:4000"
+    depends_on:
+      - database
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+      - REACT_APP_API_URL=http://103.76.53.240:4000
+      dockerfile: Dockerfile
+    container_name: kpd-frontend
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+    depends_on:
+      - backend
+
+volumes:
+  pg_data:
