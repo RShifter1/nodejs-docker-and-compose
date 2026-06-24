@@ -24,6 +24,13 @@ export class UsersController {
     private readonly wishesService: WishesService,
   ) {}
 
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  async getMe(@Request() req: RequestWithUser) {
+    return this.usersService.findOne({ id: req.user.id });
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.usersService.findUserWithWishes(+id);
@@ -32,12 +39,6 @@ export class UsersController {
   @Get()
   findMany(@Query() query: Partial<User>) {
     return this.usersService.findMany(query);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Get('me')
-  async getMe(@Request() req: RequestWithUser) {
-    return this.usersService.findOne({ id: req.user.id });
   }
 
   @UseGuards(AuthGuard('jwt'))
