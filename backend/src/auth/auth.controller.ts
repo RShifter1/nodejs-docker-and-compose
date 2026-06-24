@@ -12,7 +12,7 @@ export class AuthController {
     private usersService: UsersService,
   ) {}
 
-  @Post('signup')
+  @Post(['signup', 'signup/'])
   async signup(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
