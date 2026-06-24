@@ -5,7 +5,7 @@ services:
     image: postgres:13
     container_name: kpd-db
     env_file:
-      - .env   # или передайте переменные отдельно
+      - .env   
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -14,7 +14,7 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"   # только для локальной отладки, в проде не открываем наружу
+      - "5432:5432"   
     restart: unless-stopped
 
   backend:
@@ -25,7 +25,7 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_HOST: database   # имя сервиса базы данных
+      POSTGRES_HOST: database   
     ports:
       - "4000:4000"
     depends_on:
@@ -36,7 +36,7 @@ services:
     build:
       context: ./frontend
       args:
-      - REACT_APP_API_URL=http://103.76.53.240:4000
+      - REACT_APP_API_URL=https://api.rshifter-kpd.nomorepartiessite.ru
       dockerfile: Dockerfile
     container_name: kpd-frontend
     ports:
